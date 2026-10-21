@@ -142,7 +142,8 @@
     send(20);
   }
   function showViewCount() {
-    fetch(`${GC_SITE}/counter/bis-zum-ende.json`)
+    // GoatCounter erlaubt 4 h Browser-Cache – immer frisch holen, sonst bleibt eine alte Antwort hängen
+    fetch(`${GC_SITE}/counter/bis-zum-ende.json?t=${Date.now()}`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((d) => {
         if (!d || !d.count) return;
