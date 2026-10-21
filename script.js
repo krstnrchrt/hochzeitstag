@@ -800,7 +800,7 @@
     { d: 11, draw: (t) => sceneHome(t), caps: [
       [0.3, `${CFG.city}: ein neues Zuhause`],
       [2.3, '2. April 2003: Thomas, das dritte Kind, erweitert die Familie.'],
-      [7.2, '… und aus der Fremde wurde Heimat.']
+      [7.2, '… und aus der Fremde wurde die neue Heimat.']
     ] },
     { d: 7, draw: sceneSayon, caps: [
       [0.3, '13. Oktober 2021: Sayon wird Teil der Familie']
