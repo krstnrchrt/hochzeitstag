@@ -638,7 +638,7 @@
   }
 
   // ---------- Szene 3 + 4: Düsseldorf ----------
-  function sceneHome(t, night = false) {
+  function homeBg(t, night = false) {
     NIGHT = night;
     sky(night ? NIGHT_SKY : DAY_SKY);
     if (night) { stars(t); moon(28, 14); }
@@ -667,18 +667,17 @@
     house(4, 66, '#b5452e', night ? '#cfc6b3' : '#f3eee2');
     appleTree(118, 72);
     sunflower(140, 86); sunflower(146, 84);
-
-    if (night) {
-      // Heute: alle erwachsen
-      // Thomas, Helena, Papa, Mama, Kristina, Sayon
-      man(38, 88, HEAD.shortBlond, P.thomasGrown);
-      woman(50, 88, HEAD.veryCurly, P.helenaGrown);
-      man(62, 88, HEAD.shortCurly, P.dadToday);
-      woman(74, 88, HEAD.longCurly, P.momToday);
-      woman(86, 88, HEAD.mediumCurl, P.kristinaGrown);
-      man(98, 88, HEAD.curlyMedium, P.sayon);
-      return;
-    }
+  }
+  // Heute: Thomas, Helena, Papa, Mama, Kristina (– Sayon kommt in der eigenen Szene dazu)
+  function familyToday() {
+    man(38, 88, HEAD.shortBlond, P.thomasGrown);
+    woman(50, 88, HEAD.veryCurly, P.helenaGrown);
+    man(62, 88, HEAD.shortCurly, P.dadToday);
+    woman(74, 88, HEAD.longCurly, P.momToday);
+    woman(86, 88, HEAD.mediumCurl, P.kristinaGrown);
+  }
+  function sceneHome(t) {
+    homeBg(t);
     // 2003: Helena (12), Kristina (8) und Thomas im Kinderwagen
     man(46, 88, HEAD.shortCurly, P.dad);
     woman(58, 88, HEAD.longCurly, P.mom);
@@ -690,9 +689,31 @@
       if (a < 1.8) sprite(HEART, 95, 84 - a * 10, { r: '#e8264a' });
     }
   }
+  // ---------- Oktober 2021: Sayon kommt dazu (bewusst schlicht – im Mittelpunkt stehen Mama & Papa) ----------
+  function ring(cx, cy, r, c) {
+    for (let a = 0; a < 24; a++) {
+      px(cx + Math.round(Math.cos(a / 24 * Math.PI * 2) * r), cy + Math.round(Math.sin(a / 24 * Math.PI * 2) * r), c);
+    }
+  }
+  function sceneSayon(t) {
+    homeBg(t);
+    familyToday();
+    const walk = Math.min(t / 3, 1);
+    const f = walk < 1 ? Math.floor(t * 6) % 2 : 0;
+    man(170 - 72 * walk, 88, HEAD.shortCurly, P.sayon, f);
+    if (t > 3.4) {
+      const bob = Math.round(Math.sin(t * 2.5));
+      const y = 79 - popIn(t - 3.4, 0.5, 3) + bob;
+      ring(92, y, 3, '#f2b630'); ring(96, y, 3, '#e0a020');
+      sprite(HEART, 92, y - 9, { r: '#e8264a' });
+    }
+  }
+
   const FIREWORK = ['#f2c14e', '#e8467c', '#7fd1ff', '#ffffff', '#c8102e', '#9be37a'];
   function sceneFinale(t) {
-    sceneHome(t, true);
+    homeBg(t, true);
+    familyToday();
+    man(98, 88, HEAD.shortCurly, P.sayon);
     for (let b = 0; b < 8; b++) {
       const r = rng(100 + b);
       const cx = 16 + r() * 128, cy = 12 + r() * 28, col = FIREWORK[b % FIREWORK.length];
@@ -742,12 +763,15 @@
       [2.3, '2. April 2003: Thomas, das dritte Kind, erweitert die Familie.'],
       [7.2, '… und aus der Fremde wurde Heimat.']
     ] },
+    { d: 7, draw: sceneSayon, caps: [
+      [0.3, '21. Oktober 2021: Sayon wird Teil der Familie']
+    ] },
     { d: 9, draw: sceneFinale, caps: [
       [0.3, 'Und heute: eine große Familie!'],
       [2.8, `${years} Jahre Liebe. Alles Gute zum Hochzeitstag!`]
     ] }
   ];
-  const SPEED = 1.3; // > 1 = langsamer (Bewegung und Text)
+  const SPEED = 1.5; // > 1 = langsamer (Bewegung und Text)
   const TOTAL = SCENES.reduce((a, s) => a + s.d, 0);
   const capEl = $('#caption');
   let rafId = 0, last = 0, T = 0, lastCap = null;

@@ -367,7 +367,8 @@ body {
   font-size: 1.08rem;
   line-height: 1.75;
   white-space: pre-line;
-  text-align: left;
+  text-align: center;
+  font-style: italic;
 }
 .message.placeholder {
   padding: 16px;
