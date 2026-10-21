@@ -390,51 +390,6 @@ body {
   background: var(--cross-stitch) repeat-x center / 28px 14px;
 }
 
-/* Galerie */
-.gallery { width: 100%; max-width: 900px; text-align: center; }
-.gallery h3 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin: 0 0 20px;
-  font-family: var(--script);
-  font-weight: 400;
-  font-size: 2.3rem;
-  color: var(--red-deep);
-}
-.gallery h3 span { width: 32px; height: 32px; }
-.photos {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
-  gap: 26px 22px;
-  padding: 6px;
-}
-.polaroid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px 10px 12px;
-  border: 0;
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(70, 35, 20, .2);
-  transform: rotate(var(--r));
-  transition: transform .25s ease;
-  cursor: zoom-in;
-  font: inherit;
-  color: var(--ink);
-}
-.polaroid:hover, .polaroid:focus-visible { transform: rotate(0) scale(1.03); }
-.polaroid img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  background: #eee;
-  filter: sepia(.12) saturate(1.05);
-}
-.polaroid span { font-family: var(--script); font-size: 1.3rem; }
-
 .btn {
   padding: 14px 24px;
   border: 0;
@@ -447,36 +402,59 @@ body {
   cursor: pointer;
 }
 .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--red-deep); }
-.footer { font-size: .8rem; color: var(--muted); font-style: italic; }
+.btn-gold { background: var(--gold); box-shadow: 0 4px 0 #8f6a1e; }
+.btn-gold:active { box-shadow: 0 1px 0 #8f6a1e; }
+.card-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
 
-/* Lightbox */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
+/* ---------- 3 · Fotofilm ---------- */
+.reel {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  background: rgba(20, 10, 8, .92);
+  gap: 22px;
+  background: radial-gradient(ellipse at 50% 30%, #5a2a22, var(--night) 70%);
 }
-.lightbox figure { margin: 0; text-align: center; }
-.lightbox img { max-width: 92vw; max-height: 78vh; box-shadow: 0 10px 40px rgba(0, 0, 0, .6); border: 8px solid #fff; }
-.lightbox figcaption { margin-top: 10px; font-family: var(--script); font-size: 1.6rem; color: #fbe9c9; }
-.lightbox button {
+.reel-frame {
+  width: min(100%, 520px, calc(100svh - 230px));
+  min-width: min(100%, 260px);
+  padding: 12px 12px 10px;
+  background: #fffdf7;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .5);
+  transform: rotate(-1.5deg);
+}
+.reel-stage {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #1c1210;
+}
+.reel-stage img {
   position: absolute;
-  width: 48px;
-  height: 48px;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(255, 250, 240, .15);
-  color: #fff;
-  font-size: 1.6rem;
-  cursor: pointer;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  opacity: 0;
+  transition: opacity .12s linear;
+  filter: sepia(.08) saturate(1.05);
+  animation: ken-burns 12s ease-out both;
 }
-.lb-close { top: calc(16px + env(safe-area-inset-top)); right: 16px; }
-.lb-prev { left: 12px; top: 50%; transform: translateY(-50%); }
-.lb-next { right: 12px; top: 50%; transform: translateY(-50%); }
+.reel-stage img.portrait { object-position: 50% 22%; }
+.reel-stage img.on { opacity: 1; }
+.reel-caption {
+  margin: 10px 0 6px;
+  font-family: var(--script);
+  font-size: clamp(1.3rem, 5vw, 1.7rem);
+  text-align: center;
+  color: var(--red-deep);
+}
+.reel-progress { height: 3px; background: #efe3c6; }
+.reel-progress i { display: block; width: 0; height: 100%; background: var(--red); }
+
+@keyframes ken-burns { from { transform: scale(1); } to { transform: scale(1.06); } }
+.footer { font-size: .8rem; color: var(--muted); font-style: italic; }
 
 /* Musik-Knopf */
 .music-btn {

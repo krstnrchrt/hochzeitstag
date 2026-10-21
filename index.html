@@ -36,13 +36,23 @@
 <section id="story" class="screen story" hidden>
   <div class="tv">
     <canvas id="stage" width="160" height="120" role="img"
-      aria-label="Pixel-Animation: Hochzeit 1989 in Kasachstan, zwei Töchter, Zugfahrt über Belarus und Berlin nach Düsseldorf, ein Sohn, heute die ganze Familie."></canvas>
+      aria-label="Pixel-Animation: Hochzeit im Oktober 1989 in Kasachstan, Helena 1991, Kristina 1995, Zugfahrt über Belarus und Berlin nach Düsseldorf, Thomas 2003, heute die ganze Familie."></canvas>
   </div>
   <p id="caption" class="caption" aria-live="polite"></p>
   <button id="skip" class="btn-ghost" type="button">Überspringen ▸▸</button>
 </section>
 
-<!-- 3 · Postkarte -->
+<!-- 3 · Fotofilm -->
+<section id="reel" class="screen reel" hidden>
+  <div class="reel-frame">
+    <div id="reelStage" class="reel-stage"></div>
+    <p class="reel-caption"><span data-fill="names"></span> · Sommer 2025</p>
+    <div class="reel-progress"><i id="reelBar"></i></div>
+  </div>
+  <button id="reelSkip" class="btn-ghost" type="button">Weiter ▸▸</button>
+</section>
+
+<!-- 4 · Postkarte -->
 <section id="card" class="screen card-screen" hidden>
   <article class="postcard">
     <span class="corner tl" data-icon="corner"></span>
@@ -64,21 +74,12 @@
     <div class="stitch" aria-hidden="true"></div>
   </article>
 
-  <section id="gallery" class="gallery" hidden>
-    <h3><span data-icon="sunflower"></span>Erinnerungen<span data-icon="sunflower"></span></h3>
-    <div id="photos" class="photos"></div>
-  </section>
-
-  <button id="replay" class="btn" type="button">↻ Noch einmal ansehen</button>
+  <div class="card-actions">
+    <button id="replayReel" class="btn btn-gold" type="button" hidden>▶ Fotofilm</button>
+    <button id="replay" class="btn" type="button">↻ Alles noch einmal</button>
+  </div>
   <footer class="footer">Mit Liebe gemacht · <span data-fill="signature"></span> · <span data-fill="year"></span></footer>
 </section>
-
-<div id="lightbox" class="lightbox" hidden>
-  <button class="lb-close" type="button" aria-label="Schließen">✕</button>
-  <button class="lb-prev" type="button" aria-label="Vorheriges Bild">‹</button>
-  <figure><img alt=""><figcaption></figcaption></figure>
-  <button class="lb-next" type="button" aria-label="Nächstes Bild">›</button>
-</div>
 
 <button id="musicBtn" class="music-btn" type="button" aria-label="Musik an/aus" hidden>♪</button>
 <audio id="music" loop preload="none"></audio>

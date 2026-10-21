@@ -6,7 +6,7 @@
     village: 'Есиль',
     city: 'Düsseldorf',
     message: '',
-    signature: 'Eure Kinder',
+    signature: 'Eure Kinder - Helena, Thomas, Kristina & Sayon',
     music: 'music.mp3'
   }, window.CONFIG || {});
   const PHOTOS = Array.isArray(window.PHOTOS) ? window.PHOTOS : [];
@@ -67,58 +67,62 @@
   msgEl.textContent = msg || 'Platzhalter für eure Nachricht';
   if (!msg || /platzhalter/i.test(msg)) msgEl.classList.add('placeholder');
 
-  // ---------- Galerie + Lightbox ----------
-  const photosEl = $('#photos');
-  const lightbox = $('#lightbox');
-  const lbImg = lightbox.querySelector('img');
-  const lbCap = lightbox.querySelector('figcaption');
-  let lbIndex = 0;
+  // ---------- Fotofilm: Serienbilder schnell hintereinander wie ein Daumenkino ----------
+  const REEL_FIRST = 1000, REEL_STEP = 480, REEL_LAST = 2800;
+  const reelStage = $('#reelStage');
+  const reelBar = $('#reelBar');
+  let reelImgs = [];
+  let reelTimer = 0;
+  let reelDone = null;
 
-  function openLightbox(i) {
-    const items = $$('.polaroid');
-    if (!items.length) return;
-    lbIndex = (i + items.length) % items.length;
-    const btn = items[lbIndex];
-    lbImg.src = btn.dataset.src;
-    lbImg.alt = btn.dataset.caption;
-    lbCap.textContent = btn.dataset.caption;
-    lightbox.hidden = false;
-  }
-  lightbox.querySelector('.lb-close').addEventListener('click', () => { lightbox.hidden = true; });
-  lightbox.querySelector('.lb-prev').addEventListener('click', (e) => { e.stopPropagation(); openLightbox(lbIndex - 1); });
-  lightbox.querySelector('.lb-next').addEventListener('click', (e) => { e.stopPropagation(); openLightbox(lbIndex + 1); });
-  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.hidden = true; });
-  document.addEventListener('keydown', (e) => {
-    if (lightbox.hidden) return;
-    if (e.key === 'Escape') lightbox.hidden = true;
-    if (e.key === 'ArrowLeft') openLightbox(lbIndex - 1);
-    if (e.key === 'ArrowRight') openLightbox(lbIndex + 1);
-  });
-
-  if (PHOTOS.length) {
-    $('#gallery').hidden = false;
-    PHOTOS.forEach((p, i) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'polaroid';
-      b.dataset.src = p.src;
-      b.dataset.caption = p.caption || '';
-      b.style.setProperty('--r', `${(((i * 37) % 7) - 3) * 1.1}deg`);
+  function loadReel() {
+    if (reelImgs.length || !PHOTOS.length) return;
+    reelImgs = PHOTOS.map((p) => {
       const img = new Image();
       img.src = p.src;
-      img.alt = p.caption || '';
-      img.loading = 'lazy';
+      img.alt = '';
       img.decoding = 'async';
-      img.addEventListener('error', () => b.remove());
-      b.appendChild(img);
-      if (p.caption) {
-        const c = document.createElement('span');
-        c.textContent = p.caption;
-        b.appendChild(c);
-      }
-      b.addEventListener('click', () => openLightbox($$('.polaroid').indexOf(b)));
-      photosEl.appendChild(b);
+      img.addEventListener('load', () => {
+        if (img.naturalHeight > img.naturalWidth) img.classList.add('portrait');
+      });
+      reelStage.appendChild(img);
+      return img;
     });
+  }
+  function reelDuration(i) {
+    if (i === 0) return REEL_FIRST;
+    return i === reelImgs.length - 1 ? REEL_LAST : REEL_STEP;
+  }
+  function playReel(onDone) {
+    loadReel();
+    reelDone = onDone;
+    $$('.screen').forEach((s) => { s.hidden = s.id !== 'reel'; });
+    window.scrollTo(0, 0);
+    const total = reelImgs.reduce((a, _, i) => a + reelDuration(i), 0);
+    let i = 0;
+    reelBar.style.transition = 'none';
+    reelBar.style.width = '0';
+    void reelBar.offsetWidth;
+    reelBar.style.transition = `width ${total}ms linear`;
+    reelBar.style.width = '100%';
+    const step = () => {
+      reelImgs.forEach((img, k) => img.classList.toggle('on', k === i));
+      if (i === reelImgs.length - 1) { reelTimer = setTimeout(endReel, reelDuration(i)); return; }
+      reelTimer = setTimeout(() => { i++; step(); }, reelDuration(i));
+    };
+    clearTimeout(reelTimer);
+    step();
+  }
+  function endReel() {
+    clearTimeout(reelTimer);
+    const cb = reelDone;
+    reelDone = null;
+    if (cb) cb();
+  }
+  $('#reelSkip').addEventListener('click', endReel);
+  if (PHOTOS.length) {
+    $('#replayReel').hidden = false;
+    $('#replayReel').addEventListener('click', () => playReel(() => showCard(false)));
   }
 
   // ---------- Musik ----------
@@ -166,6 +170,7 @@
     if (opened) return;
     opened = true;
     startMusic();
+    loadReel();
     envelope.classList.add('open');
     $('.intro-hint').style.visibility = 'hidden';
     confetti(60);
@@ -232,12 +237,15 @@
     dad: { ...SKIN, h: '#3d2414', b: '#7a3b2e', w: '#e9dcc0', r: '#7a3b2e', l: '#3b3b4a' },
     momWed: { ...SKIN, h: '#6b3f22', c: '#fffaf0', g: '#d9cfbd' },
     mom: { ...SKIN, h: '#6b3f22', c: '#3a6fb0' },
-    a: { ...SKIN, h: '#4e2c14', c: '#c8102e' },
-    aGrown: { ...SKIN, h: '#4e2c14', c: '#2f8a6a' },
-    b: { ...SKIN, h: '#7a4a2a', c: '#f2b630' },
-    bGrown: { ...SKIN, h: '#7a4a2a', c: '#7b3fa0' },
-    cGrown: { ...SKIN, h: '#e6c25a', b: '#3a6fb0', w: '#fffaf0', r: '#3a6fb0', l: '#3b3b4a' },
-    husband: { s: '#a8683f', p: '#93573a', e: '#1a110c', k: '#1a110c', h: '#16110e', b: '#e9dcc0', w: '#fffaf0', r: '#e9dcc0', l: '#2e3b5e' }
+    // heute – wie auf den Fotos: Mama im weinroten Oberteil, Papa im hellen Hemd mit Jeans
+    momToday: { ...SKIN, h: '#efeadf', c: '#9e1b32' },
+    dadToday: { ...SKIN, h: '#b9b4ab', b: '#c3cede', w: '#e9eef5', r: '#c3cede', l: '#2f4a7a' },
+    helena: { ...SKIN, h: '#4e2c14', c: '#c8102e' },
+    helenaGrown: { ...SKIN, h: '#4e2c14', c: '#2f8a6a' },
+    kristina: { ...SKIN, h: '#7a4a2a', c: '#f2b630' },
+    kristinaGrown: { ...SKIN, h: '#7a4a2a', c: '#2f6fc0' },
+    thomasGrown: { ...SKIN, h: '#e6c25a', b: '#3a6fb0', w: '#fffaf0', r: '#3a6fb0', l: '#3b3b4a' },
+    sayon: { s: '#dcab84', p: '#cf9670', e: '#1a110c', k: '#1a110c', h: '#16110e', b: '#e9dcc0', w: '#fffaf0', r: '#e9dcc0', l: '#2e3b5e' }
   };
   // Köpfe werden über den Körper gelegt, lange Haare reichen bis über die Schultern.
   const HEAD = {
@@ -262,8 +270,10 @@
     ['.ccccccc.', 'ccccccccc', 'ccccccccc', 'ggggggggg'],
     ['cccccccc.', '.cccccccc', 'cccccccc.', 'ggggggggg']
   ];
-  const KID_A = ['.h.h.h.', 'hhhhhhh', 'hsssssh', 'hsesesh', 'hpsssph', 'hh.s.hh', 'h.ccc.h', '.ccccc.', 'scccccs', '.ccccc.', '.k...k.'];
-  const KID_B = ['..hhh..', '.hhhhhh', 'hsssssh', 'hsesesh', 'h.sss.h', '..ccc..', '.scccs.', '..ccc..', '..k.k..'];
+  // Helena mit 4 (sehr lockig), Kristina mit 8 (mittellange Locken)
+  const TODDLER_CURLY = ['.h.h.h.', 'hhhhhhh', 'hsesesh', 'hhssshh', '..ccc..', '.scccs.', '.ccccc.', '..k.k..'];
+  const KID_MEDIUM = ['..hhh..', '.hhhhhh', 'hsssssh', 'hsesesh', 'hpsssph', 'h.sss.h', '..ccc..', '.ccccc.', 'scccccs', '.ccccc.', '.k...k.'];
+  const TEEN_HEM = ['.ccccccc.', 'ccccccccc', '..k...k..'];
   const HEART = ['.r.r.', 'rrrrr', '.rrr.', '..r..'];
   const BIG_HEART = ['.rr.rr.', 'rrrrrrr', 'rrrrrrr', '.rrrrr.', '..rrr..', '...r...'];
   const EAGLE = [['k.....k', '.k...k.', '..kkk..'], ['.......', 'kkkkkkk', '..k.k..']];
@@ -286,6 +296,12 @@
     y -= f;
     sprite(BODY_WOMAN, x, y + 6, pal);
     sprite((gown ? GOWN_HEM : WOMAN_HEM)[f], x, y + 12, pal);
+    sprite(head, x, y, pal);
+  }
+  // Helena mit 12: etwas kleiner als die Erwachsenen (14 statt 16 Pixel)
+  function teen(x, y, head, pal) {
+    sprite(BODY_WOMAN.slice(0, 5), x, y + 6, pal);
+    sprite(TEEN_HEM, x, y + 11, pal);
     sprite(head, x, y, pal);
   }
   function bride(x, y, f = 0) {
@@ -433,10 +449,12 @@
     for (let i = 0; i < 14; i += 2) rect(x + 1, top + i, 2, 2, i % 4 ? '#fff' : '#c8102e');
   }
 
-  // ---------- Dorf in Kasachstan (Herbst oder Winter) ----------
+  // ---------- Dorf in Kasachstan (Herbst, Winter oder Sommer) ----------
   const WINTER_SKY = ['#8fb4cc', '#a3c2d6', '#b8d0df', '#cfdfe9'];
-  function villageBg(t, winter) {
+  const SUMMER_BIRCH = ['#4f9a45', '#3f8a3a', '#62ad52'];
+  function villageBg(t, season) {
     NIGHT = false;
+    const winter = season === 'winter';
     sky(winter ? WINTER_SKY : DAY_SKY);
     if (!winter) sun(132, 16);
     cloud(mod(t * 4 + 10, 200) - 30, 8); cloud(mod(t * 3 + 110, 200) - 30, 22);
@@ -452,7 +470,9 @@
 
     house(4, 64, '#3f7f6e');
     well(76, 64, t);
-    if (winter) bareBirch(56, 50); else birch(56, 50);
+    if (winter) bareBirch(56, 50);
+    else if (season === 'summer') birch(56, 50, SUMMER_BIRCH);
+    else birch(56, 50);
     house(120, 66, '#9a4434');
     flag(137, 53, t);
     fence(40, 80, 78);
@@ -474,7 +494,7 @@
         const x0 = rs() * W, sp = 8 + rs() * 10, ph = rs() * 120;
         px(mod(x0 + Math.sin(t * 1.5 + i) * 3, W), mod(ph + t * sp, H), '#fff');
       }
-    } else {
+    } else if (season === 'autumn') {
       // fallende Birkenblätter
       const r4 = rng(41);
       for (let i = 0; i < 8; i++) {
@@ -487,7 +507,7 @@
   // ---------- Szene 1: Hochzeit im Dorf ----------
   const CONF_PX = ['#c8102e', '#f2b630', '#fff', '#1f6fb0', '#e8467c', '#4f9a45'];
   function sceneWedding(t) {
-    villageBg(t, false);
+    villageBg(t, 'autumn');
     const walk = Math.min(t / 3.2, 1);
     const f = walk < 1 ? Math.floor(t * 6) % 2 : 0;
     let gx = -12 + 78 * walk, bx = 172 - 92 * walk;
@@ -511,21 +531,25 @@
     }
   }
 
-  // ---------- Szene 2: Zwei Töchter in Kasachstan ----------
-  function sceneDaughters(t) {
-    villageBg(t, true);
-    man(56, 88, HEAD.shortCurly, P.dad);
+  // ---------- Szene 2 + 3: Helena (März 1991) und Kristina (Juni 1995) ----------
+  function newbornInArms(t, start) {
+    if (t < start) return;
+    const a = t - start;
+    babyBundle(81, 95 - popIn(a, 0.4, 3));
+    if (a < 1.8) sprite(HEART, 83, 86 - a * 10, { r: '#e8264a' });
+  }
+  function sceneHelena(t) {
+    villageBg(t, 'winter');
+    man(60, 88, HEAD.shortCurly, P.dad);
     woman(80, 88, HEAD.longCurly, P.mom);
-    if (t >= 0.9) {
-      const a = t - 0.9;
-      sprite(KID_A, 68, 93 - popIn(a), P.a);
-      if (a < 1.8) sprite(HEART, 69, 84 - a * 10, { r: '#e8264a' });
-    }
-    if (t >= 3.9) {
-      const a = t - 3.9;
-      babyBundle(81, 95 - popIn(a, 0.4, 3));
-      if (a < 1.8) sprite(HEART, 83, 86 - a * 10, { r: '#e8264a' });
-    }
+    newbornInArms(t, 1.2);
+  }
+  function sceneKristina(t) {
+    villageBg(t, 'summer');
+    man(56, 88, HEAD.shortCurly, P.dad);
+    sprite(TODDLER_CURLY, 68, 96, P.helena);
+    woman(80, 88, HEAD.longCurly, P.mom);
+    newbornInArms(t, 1.2);
   }
 
   // ---------- Szene 2: Zugfahrt ----------
@@ -543,7 +567,7 @@
       };
       head(x + 19, P.dad.h, false);
       head(x + 27, P.mom.h, true);
-      rect(x + 35, y + 4, 4, 1, P.a.h); px(x + 35, y + 5, P.a.h); px(x + 38, y + 5, P.a.h); px(x + 35, y + 6, P.a.h);
+      rect(x + 35, y + 4, 4, 1, P.helena.h); px(x + 35, y + 5, P.helena.h); px(x + 38, y + 5, P.helena.h); px(x + 35, y + 6, P.helena.h);
       rect(x + 36, y + 5, 2, 3, SKIN.s); px(x + 36, y + 6, SKIN.e);
       rect(x + 39, y + 7, 2, 1, '#f4b6c8'); px(x + 39, y + 6, SKIN.s);
       if (Math.floor(t * 4) % 2) px(x + 32, y + 3, SKIN.s); else px(x + 32, y + 4, SKIN.s);
@@ -645,22 +669,24 @@
 
     if (night) {
       // Heute: alle erwachsen
-      man(38, 88, HEAD.shortBlond, P.cGrown);
-      woman(50, 88, HEAD.veryCurly, P.aGrown);
-      man(62, 88, HEAD.shortCurly, P.dad);
-      woman(74, 88, HEAD.longCurly, P.mom);
-      woman(86, 88, HEAD.mediumCurl, P.bGrown);
-      man(98, 88, HEAD.curlyMedium, P.husband);
+      // Thomas, Helena, Papa, Mama, Kristina, Sayon
+      man(38, 88, HEAD.shortBlond, P.thomasGrown);
+      woman(50, 88, HEAD.veryCurly, P.helenaGrown);
+      man(62, 88, HEAD.shortCurly, P.dadToday);
+      woman(74, 88, HEAD.longCurly, P.momToday);
+      woman(86, 88, HEAD.mediumCurl, P.kristinaGrown);
+      man(98, 88, HEAD.curlyMedium, P.sayon);
       return;
     }
-    man(50, 88, HEAD.shortCurly, P.dad);
-    woman(62, 88, HEAD.longCurly, P.mom);
-    sprite(KID_A, 74, 93, P.a);
-    sprite(KID_B, 83, 95, P.b);
+    // 2003: Helena (12), Kristina (8) und Thomas im Kinderwagen
+    man(46, 88, HEAD.shortCurly, P.dad);
+    woman(58, 88, HEAD.longCurly, P.mom);
+    teen(70, 90, HEAD.veryCurly, P.helena);
+    sprite(KID_MEDIUM, 81, 93, P.kristina);
     if (t >= 2.4) {
       const a = t - 2.4;
-      pram(93, 94 - popIn(a, 0.5, 3));
-      if (a < 1.8) sprite(HEART, 97, 84 - a * 10, { r: '#e8264a' });
+      pram(91, 94 - popIn(a, 0.5, 3));
+      if (a < 1.8) sprite(HEART, 95, 84 - a * 10, { r: '#e8264a' });
     }
   }
   const FIREWORK = ['#f2c14e', '#e8467c', '#7fd1ff', '#ffffff', '#c8102e', '#9be37a'];
@@ -694,12 +720,15 @@
   // ---------- Ablauf ----------
   const SCENES = [
     { d: 9.5, draw: sceneWedding, caps: [
-      [0.3, `${CFG.village}, Kasachische SSR · 1989`],
+      [0.3, `${CFG.village}, Kasachische SSR · Oktober 1989`],
       [4.3, `21. Oktober 1989: ${coupleNames} sagen „Ja!“`]
     ] },
-    { d: 8, draw: sceneDaughters, caps: [
-      [0.3, 'Bald kam eine Tochter zur Welt …'],
-      [3.7, '… und dann noch eine!']
+    { d: 6, draw: sceneHelena, caps: [
+      [0.3, 'März 1991: Helena kommt zur Welt!']
+    ] },
+    { d: 7, draw: sceneKristina, caps: [
+      [0.3, 'Juni 1995: Kristina kommt zur Welt!'],
+      [3.8, 'Helena ist jetzt große Schwester.']
     ] },
     { d: 12.5, draw: sceneTrain, caps: [
       [0.3, 'Dann ging es zu viert mit dem Zug in ein neues Leben …'],
@@ -709,7 +738,7 @@
     ] },
     { d: 9.5, draw: (t) => sceneHome(t), caps: [
       [0.3, `${CFG.city}: ein neues Zuhause`],
-      [2.3, 'Hier kam noch ein Sohn dazu …'],
+      [2.3, '2003: Thomas kommt zur Welt!'],
       [6.0, '… und aus der Fremde wurde Heimat.']
     ] },
     { d: 9, draw: sceneFinale, caps: [
@@ -756,21 +785,24 @@
     rafId = requestAnimationFrame(tick);
   }
   function showStory() {
-    lightbox.hidden = true;
-    $('#card').hidden = true;
-    $('#story').hidden = false;
+    clearTimeout(reelTimer);
+    reelDone = null;
+    $$('.screen').forEach((s) => { s.hidden = s.id !== 'story'; });
     window.scrollTo(0, 0);
     cancelAnimationFrame(rafId);
     T = 0; last = 0; lastCap = null;
     render(0);
     rafId = requestAnimationFrame(tick);
   }
+  function showCard(withConfetti) {
+    $$('.screen').forEach((s) => { s.hidden = s.id !== 'card'; });
+    window.scrollTo(0, 0);
+    if (withConfetti) confetti(120);
+  }
   function finishStory() {
     cancelAnimationFrame(rafId);
-    $('#story').hidden = true;
-    $('#card').hidden = false;
-    window.scrollTo(0, 0);
-    confetti(120);
+    if (PHOTOS.length) playReel(() => showCard(true));
+    else showCard(true);
   }
   $('#skip').addEventListener('click', finishStory);
   $('#replay').addEventListener('click', showStory);
@@ -778,8 +810,9 @@
   // Debug/Vorschau: index.html#karte springt direkt zur Postkarte, #film direkt zur Animation
   // #frame=12.5 zeigt ein Standbild bei Sekunde 12,5
   const frameMatch = location.hash.match(/^#frame=([\d.]+)$/);
-  if (location.hash === '#karte') { $('#intro').hidden = true; finishStory(); }
-  else if (location.hash === '#film') { $('#intro').hidden = true; showStory(); }
+  if (location.hash === '#karte') showCard(false);
+  else if (location.hash === '#fotos') playReel(() => showCard(true));
+  else if (location.hash === '#film') showStory();
   else if (frameMatch) {
     $('#intro').hidden = true;
     $('#story').hidden = false;

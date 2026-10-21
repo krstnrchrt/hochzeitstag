@@ -9,7 +9,7 @@ window.CONFIG = {
   // verschwindet der gestrichelte Rahmen.
   message: `[Platzhalter: Hier kommt eure persönliche Nachricht an Андрей & Ольга hin.]`,
 
-  signature: 'Eure Kinder',
+  signature: 'Eure Kinder - Helena, Thomas, Kristina & Sayon',
 
   // PLATZHALTER: MP3-Datei mit diesem Namen in den Hauptordner legen.
   // Fehlt die Datei, läuft die Seite einfach ohne Musik.
