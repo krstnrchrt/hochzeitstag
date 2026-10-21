@@ -235,24 +235,24 @@
   const P = {
     dadWed: { ...SKIN, h: '#3d2414', b: '#2e3b5e', w: '#fffaf0', r: '#c8102e', l: '#2e3b5e' },
     dad: { ...SKIN, h: '#3d2414', b: '#7a3b2e', w: '#e9dcc0', r: '#7a3b2e', l: '#3b3b4a' },
-    momWed: { ...SKIN, h: '#6b3f22', c: '#fffaf0', g: '#d9cfbd' },
-    mom: { ...SKIN, h: '#6b3f22', c: '#3a6fb0' },
-    // heute – wie auf den Fotos: Mama im weinroten Oberteil, Papa im hellen Hemd mit Jeans
-    momToday: { ...SKIN, h: '#efeadf', c: '#9e1b32' },
+    momWed: { ...SKIN, h: '#6b3f22', i: '#8a5732', c: '#fffaf0', g: '#d9cfbd' },
+    mom: { ...SKIN, h: '#6b3f22', i: '#8a5732', c: '#3a6fb0' },
+    // heute – wie auf den Fotos: Mama hellblond glänzend im weinroten Oberteil, Papa im hellen Hemd mit Jeans
+    momToday: { ...SKIN, h: '#f2d78e', i: '#fff6d2', c: '#9e1b32' },
     dadToday: { ...SKIN, h: '#b9b4ab', b: '#c3cede', w: '#e9eef5', r: '#c3cede', l: '#2f4a7a' },
     helena: { ...SKIN, h: '#4e2c14', c: '#c8102e' },
     helenaGrown: { ...SKIN, h: '#4e2c14', c: '#2f8a6a' },
     kristina: { ...SKIN, h: '#7a4a2a', c: '#f2b630' },
-    kristinaGrown: { ...SKIN, h: '#7a4a2a', c: '#2f6fc0' },
+    kristinaGrown: { ...SKIN, h: '#7a4a2a', c: '#9d88b9' },
     thomasGrown: { ...SKIN, h: '#e6c25a', b: '#3a6fb0', w: '#fffaf0', r: '#3a6fb0', l: '#3b3b4a' },
-    sayon: { s: '#dcab84', p: '#cf9670', e: '#1a110c', k: '#1a110c', h: '#16110e', b: '#e9dcc0', w: '#fffaf0', r: '#e9dcc0', l: '#2e3b5e' }
+    sayon: { s: '#dcab84', p: '#cf9670', e: '#1a110c', k: '#1a110c', h: '#16110e', b: '#9fb6cf', w: '#dfe8f2', r: '#9fb6cf', l: '#2e3b5e' }
   };
   // Köpfe werden über den Körper gelegt, lange Haare reichen bis über die Schultern.
   const HEAD = {
     shortCurly: ['..h.h.h..', '.hhhhhhh.', '.hsssssh.', '..seses..', '..psssp..', '...sss...'],
     shortBlond: ['...hhhh..', '..hhhhhh.', '..hhsss..', '..seses..', '..psssp..', '...sss...'],
     curlyMedium: ['.h.h.h.h.', 'hhhhhhhhh', 'hhssssshh', 'hhseseshh', 'hhpsssphh', 'h..sss..h', 'h.......h'],
-    longCurly: ['..hhhhh..', '.hhhhhhh.', 'hhssssshh', 'hhseseshh', 'hhpsssphh', 'hh.sss.hh', '.h.....h.', 'h.......h', '.h.....h.'],
+    longCurly: ['..hhhhh..', '.hhiihhh.', 'hhssssshh', 'hhseseshh', 'hhpsssphh', 'hi.sss.hh', '.h.....i.', 'h.......h', '.h.....h.'],
     veryCurly: ['.h.h.h.h.', 'hhhhhhhhh', 'hhssssshh', 'hhseseshh', 'hhpsssphh', 'hhhssshhh', 'hh.....hh', '.h.....h.'],
     mediumCurl: ['...hhh...', '..hhhhhh.', '.hssssshh', '.hseseshh', '.hpsssphh', '.hhssshh.', 'h.......h']
   };
@@ -724,11 +724,11 @@
       [4.3, `21. Oktober 1989: ${coupleNames} sagen „Ja!“`]
     ] },
     { d: 6, draw: sceneHelena, caps: [
-      [0.3, 'März 1991: Helena kommt zur Welt!']
+      [0.3, '24. März 1991: Helena kommt zur Welt!']
     ] },
     { d: 7, draw: sceneKristina, caps: [
-      [0.3, 'Juni 1995: Kristina kommt zur Welt!'],
-      [3.8, 'Helena ist jetzt große Schwester.']
+      [0.3, '14. Juni 1995: Kristina kommt dazu.'],
+      [4.0, 'Helena ist jetzt eine große Schwester.']
     ] },
     { d: 12.5, draw: sceneTrain, caps: [
       [0.3, 'Dann ging es zu viert mit dem Zug in ein neues Leben …'],
@@ -736,16 +736,17 @@
       [6.4, '… über Berlin …'],
       [9.4, `… bis nach ${CFG.city}.`]
     ] },
-    { d: 9.5, draw: (t) => sceneHome(t), caps: [
+    { d: 11, draw: (t) => sceneHome(t), caps: [
       [0.3, `${CFG.city}: ein neues Zuhause`],
-      [2.3, '2003: Thomas kommt zur Welt!'],
-      [6.0, '… und aus der Fremde wurde Heimat.']
+      [2.3, '2. April 2003: Thomas, das dritte Kind, segnet die Familie.'],
+      [7.2, '… und aus der Fremde wurde Heimat.']
     ] },
     { d: 9, draw: sceneFinale, caps: [
       [0.3, 'Und heute: eine große Familie!'],
       [2.8, `${years} Jahre Liebe. Alles Gute zum Hochzeitstag!`]
     ] }
   ];
+  const SPEED = 1.3; // > 1 = langsamer (Bewegung und Text)
   const TOTAL = SCENES.reduce((a, s) => a + s.d, 0);
   const capEl = $('#caption');
   let rafId = 0, last = 0, T = 0, lastCap = null;
@@ -779,7 +780,7 @@
   function tick(ts) {
     const dt = last ? Math.min((ts - last) / 1000, 0.1) : 0;
     last = ts;
-    T += dt;
+    T += dt / SPEED;
     if (T >= TOTAL) { finishStory(); return; }
     render(T);
     rafId = requestAnimationFrame(tick);
