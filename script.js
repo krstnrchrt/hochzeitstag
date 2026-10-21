@@ -30,7 +30,8 @@
     village: CFG.village,
     villageUpper: CFG.village.toUpperCase(),
     city: CFG.city,
-    signature: CFG.signature
+    signature: CFG.signature,
+    signatureInline: CFG.signature.replace(/\s*\n\s*/g, ', ')
   };
   $$('[data-fill]').forEach((el) => { el.textContent = fills[el.dataset.fill] ?? ''; });
   $$('[data-icon]').forEach((el) => { el.innerHTML = ICONS[el.dataset.icon] || ''; });
@@ -245,7 +246,7 @@
     kristina: { ...SKIN, h: '#7a4a2a', c: '#f2b630' },
     kristinaGrown: { ...SKIN, h: '#7a4a2a', c: '#9d88b9' },
     thomasGrown: { ...SKIN, h: '#e6c25a', b: '#3a6fb0', w: '#fffaf0', r: '#3a6fb0', l: '#3b3b4a' },
-    sayon: { s: '#dcab84', p: '#cf9670', e: '#1a110c', k: '#1a110c', h: '#16110e', b: '#9fb6cf', w: '#dfe8f2', r: '#9fb6cf', l: '#2e3b5e' }
+    sayon: { s: '#dcab84', p: '#cf9670', e: '#1a110c', k: '#1a110c', h: '#16110e', b: '#1f5fbf', w: '#cfe0f5', r: '#1f5fbf', l: '#2e3b5e' }
   };
   // Köpfe werden über den Körper gelegt, lange Haare reichen bis über die Schultern.
   const HEAD = {
@@ -738,7 +739,7 @@
     ] },
     { d: 11, draw: (t) => sceneHome(t), caps: [
       [0.3, `${CFG.city}: ein neues Zuhause`],
-      [2.3, '2. April 2003: Thomas, das dritte Kind, segnet die Familie.'],
+      [2.3, '2. April 2003: Thomas, das dritte Kind, erweitert die Familie.'],
       [7.2, '… und aus der Fremde wurde Heimat.']
     ] },
     { d: 9, draw: sceneFinale, caps: [

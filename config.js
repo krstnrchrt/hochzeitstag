@@ -7,9 +7,10 @@ window.CONFIG = {
   // PLATZHALTER: Eure Nachricht. Sie erscheint am Ende der Animation auf der Postkarte.
   // Zeilenumbrüche werden übernommen. Sobald hier kein „Platzhalter“ mehr steht,
   // verschwindet der gestrichelte Rahmen.
-  message: `[Platzhalter: Hier kommt eure persönliche Nachricht an Андрей & Ольга hin.]`,
+  message: `Wir wünschen euch alles Gute`,
 
-  signature: 'Eure Kinder - Helena, Thomas, Kristina & Sayon',
+  // Ein \n erzeugt einen Zeilenumbruch.
+  signature: 'Eure Kinder - Helena, Thomas\nSayon & Kristina',
 
   // PLATZHALTER: MP3-Datei mit diesem Namen in den Hauptordner legen.
   // Fehlt die Datei, läuft die Seite einfach ohne Musik.

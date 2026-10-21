@@ -383,6 +383,7 @@ body {
   font-size: 1.9rem;
   line-height: 1.2;
   color: var(--red-deep);
+  white-space: pre-line;
 }
 .stitch {
   height: 14px;
