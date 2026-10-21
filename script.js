@@ -803,7 +803,7 @@
       [7.2, '… und aus der Fremde wurde Heimat.']
     ] },
     { d: 7, draw: sceneSayon, caps: [
-      [0.3, '21. Oktober 2021: Sayon wird Teil der Familie']
+      [0.3, '13. Oktober 2021: Sayon wird Teil der Familie']
     ] },
     { d: 9, draw: sceneFinale, caps: [
       [0.3, 'Und heute: eine große Familie!'],
