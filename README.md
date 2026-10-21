@@ -46,8 +46,8 @@ The number is the point in the animation, in seconds. You'll see a still image o
 | Number | Scene |
 | --- | --- |
 | `#frame=2` – `9` | Wedding in Есиль (from about 5 with hearts and confetti) |
-| `#frame=11` – `15` | 24 March 1991: Helena (snow) |
-| `#frame=17` – `22` | 14 June 1995: Kristina (summer) |
+| `#frame=11` – `15` | 1991: Helena (snow) |
+| `#frame=17` – `22` | 1995: Kristina (summer) |
 | `#frame=24` – `34` | Train: Kazakhstan → Belarus (about 27) → Berlin (about 30) → Düsseldorf (about 33) |
 | `#frame=37` – `45` | Düsseldorf, Thomas 2003 (from about 38) |
 | `#frame=47` – `52` | Sayon arrives, rings and cockatiel (from about 50) |
