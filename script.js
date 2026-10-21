@@ -130,7 +130,7 @@
   }
 
   // ---------- Besucherzählung (GoatCounter) ----------
-  // Gezählt wird alles; angezeigt wird nur, wie oft bis zum Ende geschaut wurde.
+  // Gezählt wird alles; angezeigt wird die Gesamtzahl aller Besuche (GoatCounter „TOTAL“).
   const GC_SITE = 'https://krstnrchrt.goatcounter.com';
   const PREVIEW = location.hash.length > 1;
   function track(path, title) {
@@ -143,7 +143,7 @@
   }
   function showViewCount() {
     // GoatCounter erlaubt 4 h Browser-Cache – immer frisch holen, sonst bleibt eine alte Antwort hängen
-    fetch(`${GC_SITE}/counter/bis-zum-ende.json?t=${Date.now()}`, { cache: 'no-store' })
+    fetch(`${GC_SITE}/counter/TOTAL.json?t=${Date.now()}`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((d) => {
         if (!d || !d.count) return;
