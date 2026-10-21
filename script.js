@@ -120,10 +120,36 @@
     reelDone = null;
     if (cb) cb();
   }
-  $('#reelSkip').addEventListener('click', endReel);
+  $('#reelSkip').addEventListener('click', () => { track('fotofilm-uebersprungen', 'Fotofilm übersprungen'); endReel(); });
   if (PHOTOS.length) {
     $('#replayReel').hidden = false;
-    $('#replayReel').addEventListener('click', () => playReel(() => showCard(false)));
+    $('#replayReel').addEventListener('click', () => {
+      track('nochmal-fotofilm', 'Fotofilm nochmal');
+      playReel(() => showCard(false));
+    });
+  }
+
+  // ---------- Besucherzählung (GoatCounter) ----------
+  // Gezählt wird alles; angezeigt wird nur, wie oft bis zum Ende geschaut wurde.
+  const GC_SITE = 'https://krstnrchrt.goatcounter.com';
+  const PREVIEW = location.hash.length > 1;
+  function track(path, title) {
+    if (PREVIEW) return;
+    const send = (tries) => {
+      if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path, title, event: true });
+      else if (tries > 0) setTimeout(() => send(tries - 1), 500);
+    };
+    send(20);
+  }
+  function showViewCount() {
+    fetch(`${GC_SITE}/counter/bis-zum-ende.json`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((d) => {
+        if (!d || !d.count) return;
+        $('#viewCount b').textContent = d.count;
+        $('#viewCount').hidden = false;
+      })
+      .catch(() => {});
   }
 
   // ---------- Musik ----------
@@ -173,6 +199,7 @@
     startMusic();
     loadReel();
     envelope.classList.add('open');
+    track('umschlag-geoeffnet', 'Umschlag geöffnet');
     $('.intro-hint').style.visibility = 'hidden';
     confetti(60);
     setTimeout(() => $('#intro').classList.add('leaving'), 1800);
@@ -845,7 +872,7 @@
     const dt = last ? Math.min((ts - last) / 1000, 0.1) : 0;
     last = ts;
     T += dt / SPEED;
-    if (T >= TOTAL) { finishStory(); return; }
+    if (T >= TOTAL) { track('animation-ende', 'Animation bis zum Ende'); finishStory(); return; }
     render(T);
     rafId = requestAnimationFrame(tick);
   }
@@ -869,7 +896,7 @@
     $$('.screen').forEach((s) => { s.hidden = s.id !== 'card'; });
     window.scrollTo(0, 0);
     card.classList.remove('reveal');
-    if (!grand) { card.classList.remove('counting'); return; }
+    if (!grand) { card.classList.remove('counting'); showViewCount(); return; }
     card.classList.add('counting');
     const num = $('#countNum');
     const start = Date.now();
@@ -883,6 +910,8 @@
         card.classList.add('reveal');
         window.scrollTo(0, 0);
         confetti(120);
+        track('bis-zum-ende', 'Bis zum Ende angesehen');
+        setTimeout(showViewCount, 1500);
       }, 900);
     };
     num.textContent = '0';
@@ -893,8 +922,8 @@
     if (PHOTOS.length) playReel(() => showCard(true));
     else showCard(true);
   }
-  $('#skip').addEventListener('click', finishStory);
-  $('#replay').addEventListener('click', showStory);
+  $('#skip').addEventListener('click', () => { track('animation-uebersprungen', 'Animation übersprungen'); finishStory(); });
+  $('#replay').addEventListener('click', () => { track('nochmal-alles', 'Alles nochmal'); showStory(); });
 
   // Debug/Vorschau: index.html#karte springt direkt zur Postkarte, #film direkt zur Animation
   // #frame=12.5 zeigt ein Standbild bei Sekunde 12,5

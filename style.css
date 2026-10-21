@@ -475,6 +475,8 @@ body {
 .reel-progress i { display: block; width: 0; height: 100%; background: var(--red); }
 
 @keyframes ken-burns { from { transform: scale(1); } to { transform: scale(1.06); } }
+.view-count { margin: -18px 0 0; font-size: .85rem; color: var(--red-deep); }
+.view-count b { font-family: var(--poster); font-weight: 400; }
 .footer { font-size: .8rem; color: var(--muted); font-style: italic; }
 
 /* Musik-Knopf */
