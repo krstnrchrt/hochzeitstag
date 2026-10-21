@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alles Gute zum Hochzeitstag!</title>
+<meta name="description" content="Für Андрей & Ольга – 21. Oktober 1989. Von Euren Kindern.">
+<meta property="og:title" content="Alles Gute zum Hochzeitstag! ❤">
+<meta property="og:description" content="Für Андрей & Ольга – von Euren Kindern">
+<meta name="theme-color" content="#8e1b22">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 28S4 20 4 11.5C4 7.5 7 5 10.3 5c2.5 0 4.5 1.4 5.7 3.4C17.2 6.4 19.2 5 21.7 5 25 5 28 7.5 28 11.5 28 20 16 28 16 28z' fill='%23d7263d'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Marck+Script&family=Press+Start+2P&family=Russo+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 1 · Umschlag -->
+<section id="intro" class="screen intro">
+  <div class="floaters" aria-hidden="true"></div>
+  <p class="intro-kicker">Post für</p>
+  <h1 class="intro-names" data-fill="names"></h1>
+  <button id="envelope" class="envelope" type="button" aria-label="Umschlag öffnen">
+    <span class="env-back"></span>
+    <span class="env-letter"><span class="env-letter-icon" data-icon="heart"></span>Alles Gute!</span>
+    <span class="env-pocket"><span class="env-address"><span data-fill="village"></span> → <span data-fill="city"></span></span></span>
+    <span class="env-flap"><span class="env-seal" data-icon="starGold"></span></span>
+    <span class="env-stamp"><span class="env-stamp-icon" data-icon="tulip"></span><small>ПОЧТА СССР</small><b>1989</b></span>
+    <span class="env-postmark"><span data-fill="villageUpper"></span><br>21·10·89</span>
+  </button>
+  <p class="intro-hint">Zum Öffnen antippen</p>
+</section>
+
+<!-- 2 · Pixel-Geschichte -->
+<section id="story" class="screen story" hidden>
+  <div class="tv">
+    <canvas id="stage" width="160" height="120" role="img"
+      aria-label="Pixel-Animation: Hochzeit 1989 in Kasachstan, zwei Töchter, Zugfahrt über Belarus und Berlin nach Düsseldorf, ein Sohn, heute die ganze Familie."></canvas>
+  </div>
+  <p id="caption" class="caption" aria-live="polite"></p>
+  <button id="skip" class="btn-ghost" type="button">Überspringen ▸▸</button>
+</section>
+
+<!-- 3 · Postkarte -->
+<section id="card" class="screen card-screen" hidden>
+  <article class="postcard">
+    <span class="corner tl" data-icon="corner"></span>
+    <span class="corner tr" data-icon="corner"></span>
+    <span class="corner bl" data-icon="corner"></span>
+    <span class="corner br" data-icon="corner"></span>
+
+    <div class="icon-row" aria-hidden="true"></div>
+    <p class="kicker">Alles Gute zum</p>
+    <h2 class="big"><span data-fill="years"></span>. Hochzeitstag!</h2>
+    <p class="names" data-fill="names"></p>
+    <p class="dates"><span>21. Oktober 1989</span><span class="dates-heart" data-icon="heart"></span><span>21. Oktober <span data-fill="year"></span></span></p>
+    <p class="route">Von <span data-fill="village"></span> bis <span data-fill="city"></span></p>
+    <div class="counter"><b data-fill="days"></b><span>gemeinsame Tage</span></div>
+
+    <div class="ornament-line" aria-hidden="true"></div>
+    <blockquote id="message" class="message"></blockquote>
+    <p class="signature">In Liebe,<br><span data-fill="signature"></span></p>
+    <div class="stitch" aria-hidden="true"></div>
+  </article>
+
+  <section id="gallery" class="gallery" hidden>
+    <h3><span data-icon="sunflower"></span>Erinnerungen<span data-icon="sunflower"></span></h3>
+    <div id="photos" class="photos"></div>
+  </section>
+
+  <button id="replay" class="btn" type="button">↻ Noch einmal ansehen</button>
+  <footer class="footer">Mit Liebe gemacht · <span data-fill="signature"></span> · <span data-fill="year"></span></footer>
+</section>
+
+<div id="lightbox" class="lightbox" hidden>
+  <button class="lb-close" type="button" aria-label="Schließen">✕</button>
+  <button class="lb-prev" type="button" aria-label="Vorheriges Bild">‹</button>
+  <figure><img alt=""><figcaption></figcaption></figure>
+  <button class="lb-next" type="button" aria-label="Nächstes Bild">›</button>
+</div>
+
+<button id="musicBtn" class="music-btn" type="button" aria-label="Musik an/aus" hidden>♪</button>
+<audio id="music" loop preload="none"></audio>
+<div id="confetti" class="confetti" aria-hidden="true"></div>
+
+<script src="config.js"></script>
+<script src="photos.js"></script>
+<script src="icons.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
