@@ -276,6 +276,16 @@
   const KID_MEDIUM = ['..hhh..', '.hhhhhh', 'hsssssh', 'hsesesh', 'hpsssph', 'h.sss.h', '..ccc..', '.ccccc.', 'scccccs', '.ccccc.', '.k...k.'];
   const TEEN_HEM = ['.ccccccc.', 'ccccccccc', '..k...k..'];
   const HEART = ['.r.r.', 'rrrrr', '.rrr.', '..r..'];
+  // Baby im Stehen: großer Kopf, Haarlocke, Schnuller, Strampler
+  const BABY = ['...h...', '..sss..', '.sssss.', '.seses.', '.psssp.', '..sms..', '.ddddd.', 'sddddds', '.ddddd.', '.s...s.'];
+  // Nymphensittich (Hahn): gelber Kopf mit Haube, orange-rote Wangen, grauer Körper
+  const TIEL = [
+    ['...........y....', '.....gg....yy...', '.....ggg..yyy...', '......ggw.yyyyy.', '......ggwwyykyyb', '.......ggwyyooy.',
+      '...gggggggggg...', '..gggggggggll...', 'dddggggggll.....', 'dddd............', 'dd..............'],
+    ['...........y....', '...........yy...', '..........yyy...', '..........yyyyy.', '..........yykyyb', '..........yyooy.',
+      '...gggggggggg...', '..gggggwwgggll..', 'dddggggwwgll....', 'dddd..gggg......', 'dd.....gg.......']
+  ];
+  const TIEL_PAL = { y: '#f6d34a', o: '#ff5a36', k: '#1a1a1a', b: '#e2c4b6', g: '#9c9c9c', l: '#cfcfcf', w: '#f6f6f6', d: '#767676' };
   const BIG_HEART = ['.rr.rr.', 'rrrrrrr', 'rrrrrrr', '.rrrrr.', '..rrr..', '...r...'];
   const EAGLE = [['k.....k', '.k...k.', '..kkk..'], ['.......', 'kkkkkkk', '..k.k..']];
   const STORK = [['kk...kk', '.wwwwwwr', '...r...'], ['.......', 'kwwwwwwr', 'k..r..k']];
@@ -313,16 +323,29 @@
     px(x + 4, y + 6, '#c8102e'); px(x + 3, y + 7, '#c8102e'); px(x + 4, y + 7, '#f2b630');
     px(x + 5, y + 7, '#e8467c'); px(x + 4, y + 8, '#3b7d3a');
   }
-  function babyBundle(x, y) {
-    rect(x + 2, y, 5, 3, '#f4b6c8'); rect(x + 2, y, 5, 1, '#f9d3de');
-    rect(x, y, 3, 3, SKIN.s); px(x, y, '#7a4a2a'); px(x + 1, y + 1, SKIN.e);
-  }
-  function pram(x, y) {
+  function pram(x, y, empty = false) {
     line(x + 10, y + 3, x + 13, y - 1, '#555'); rect(x + 12, y - 2, 3, 1, '#555');
     rect(x, y + 3, 11, 5, '#3a6fb0'); rect(x, y + 3, 11, 1, '#5b8fd0');
     rect(x, y, 4, 3, '#2c5a94'); rect(x + 1, y - 1, 3, 1, '#2c5a94');
-    rect(x + 5, y + 1, 3, 2, SKIN.s); px(x + 6, y, '#e6c25a'); px(x + 5, y + 1, '#e6c25a'); px(x + 7, y + 2, SKIN.e);
+    if (!empty) { rect(x + 5, y + 1, 3, 2, SKIN.s); px(x + 6, y, '#e6c25a'); px(x + 5, y + 1, '#e6c25a'); px(x + 7, y + 2, SKIN.e); }
     disc(x + 2, y + 9, 1, '#222'); disc(x + 8, y + 9, 1, '#222');
+  }
+  function standingBaby(x, t, start, hair, onesie) {
+    if (t < start) return;
+    const a = t - start;
+    const wiggle = a > 0.6 && Math.floor(t * 2) % 4 === 0 ? 1 : 0;
+    sprite(BABY, x, 94 - popIn(a, 0.5, 6) - wiggle, { ...SKIN, h: hair, d: onesie, m: '#f48fb1' });
+    if (a < 1.8) sprite(HEART, x + 1, 84 - a * 10, { r: '#e8264a' });
+  }
+  function cockatiel(x, y, t, faceLeft) {
+    let rows = TIEL[Math.floor(t * 8) % 2];
+    if (faceLeft) rows = rows.map((r) => r.split('').reverse().join(''));
+    sprite(rows, x, y, TIEL_PAL);
+  }
+  // Fliegt auf einer Ellipse; schaut immer in Flugrichtung
+  function cockatielOrbit(t, cx, cy, rx, ry, speed) {
+    const ang = t * speed;
+    cockatiel(cx + Math.cos(ang) * rx - 8, cy + Math.sin(ang) * ry - 5, t, Math.sin(ang) > 0);
   }
   function popIn(t, dur = 0.5, height = 5) {
     return t < dur ? Math.round(Math.sin((t / dur) * Math.PI) * height) : 0;
@@ -533,24 +556,18 @@
   }
 
   // ---------- Szene 2 + 3: Helena (März 1991) und Kristina (Juni 1995) ----------
-  function newbornInArms(t, start) {
-    if (t < start) return;
-    const a = t - start;
-    babyBundle(81, 95 - popIn(a, 0.4, 3));
-    if (a < 1.8) sprite(HEART, 83, 86 - a * 10, { r: '#e8264a' });
-  }
   function sceneHelena(t) {
     villageBg(t, 'winter');
     man(60, 88, HEAD.shortCurly, P.dad);
     woman(80, 88, HEAD.longCurly, P.mom);
-    newbornInArms(t, 1.2);
+    standingBaby(71, t, 1.2, P.helena.h, '#f7a8c4');
   }
   function sceneKristina(t) {
     villageBg(t, 'summer');
-    man(56, 88, HEAD.shortCurly, P.dad);
-    sprite(TODDLER_CURLY, 68, 96, P.helena);
+    man(50, 88, HEAD.shortCurly, P.dad);
+    sprite(TODDLER_CURLY, 61, 96, P.helena);
+    standingBaby(70, t, 1.2, P.kristina.h, '#f7a8c4');
     woman(80, 88, HEAD.longCurly, P.mom);
-    newbornInArms(t, 1.2);
   }
 
   // ---------- Szene 2: Zugfahrt ----------
@@ -559,18 +576,19 @@
     rect(x, y, 44, 16, '#2f6b3a'); rect(x, y + 11, 44, 1, '#f2b630');
     for (let i = 0; i < 5; i++) rect(x + 3 + i * 8, y + 3, 6, 6, '#bfe3f2');
     if (passengers) {
-      // Papa, Mama, Tochter mit Locken und das Baby
+      // Helena, Papa, Mama und Baby Kristina
       const hy = y + 4;
       const head = (hx, hair, long) => {
         rect(hx + 1, hy, 3, 1, hair); px(hx, hy + 1, hair); px(hx + 4, hy + 1, hair);
         if (long) { px(hx, hy + 2, hair); px(hx + 4, hy + 2, hair); px(hx, hy + 3, hair); px(hx + 4, hy + 3, hair); }
         rect(hx + 1, hy + 1, 3, 3, SKIN.s); px(hx + 1, hy + 2, SKIN.e); px(hx + 3, hy + 2, SKIN.e);
       };
+      head(x + 11, P.helena.h, true);
       head(x + 19, P.dad.h, false);
       head(x + 27, P.mom.h, true);
-      rect(x + 35, y + 4, 4, 1, P.helena.h); px(x + 35, y + 5, P.helena.h); px(x + 38, y + 5, P.helena.h); px(x + 35, y + 6, P.helena.h);
-      rect(x + 36, y + 5, 2, 3, SKIN.s); px(x + 36, y + 6, SKIN.e);
-      rect(x + 39, y + 7, 2, 1, '#f4b6c8'); px(x + 39, y + 6, SKIN.s);
+      // Baby Kristina im eigenen Fenster: Babykopf mit Locke und Schnuller
+      rect(x + 36, y + 5, 4, 3, SKIN.s); px(x + 38, y + 4, P.kristina.h); px(x + 37, y + 4, P.kristina.h);
+      px(x + 37, y + 6, SKIN.e); px(x + 39, y + 6, SKIN.e); px(x + 38, y + 7, '#f48fb1');
       if (Math.floor(t * 4) % 2) px(x + 32, y + 3, SKIN.s); else px(x + 32, y + 4, SKIN.s);
     }
     disc(x + 9, y + 17, 2, '#222'); disc(x + 35, y + 17, 2, '#222');
@@ -678,16 +696,13 @@
   }
   function sceneHome(t) {
     homeBg(t);
-    // 2003: Helena (12), Kristina (8) und Thomas im Kinderwagen
+    // 2003: Helena (12), Kristina (8) und Baby Thomas neben dem Kinderwagen
     man(46, 88, HEAD.shortCurly, P.dad);
     woman(58, 88, HEAD.longCurly, P.mom);
     teen(70, 90, HEAD.veryCurly, P.helena);
     sprite(KID_MEDIUM, 81, 93, P.kristina);
-    if (t >= 2.4) {
-      const a = t - 2.4;
-      pram(91, 94 - popIn(a, 0.5, 3));
-      if (a < 1.8) sprite(HEART, 95, 84 - a * 10, { r: '#e8264a' });
-    }
+    if (t >= 2.4) pram(98, 94, true);
+    standingBaby(89, t, 2.4, '#e6c25a', '#8ec5ff');
   }
   // ---------- Oktober 2021: Sayon kommt dazu (bewusst schlicht – im Mittelpunkt stehen Mama & Papa) ----------
   function ring(cx, cy, r, c) {
@@ -707,13 +722,30 @@
       ring(92, y, 3, '#f2b630'); ring(96, y, 3, '#e0a020');
       sprite(HEART, 92, y - 9, { r: '#e8264a' });
     }
+    // Nymphensittich: fliegt von links herein und kreist dann über der Familie
+    if (t > 1) {
+      const p = t - 1;
+      if (p < 1.4) cockatiel(-18 + (48 + 18) * (p / 1.4), 35, t, false);
+      else cockatielOrbit(p - 1.4 + Math.PI / 1.5, 96, 40, 40, 14, 1.5);
+    }
   }
 
   const FIREWORK = ['#f2c14e', '#e8467c', '#7fd1ff', '#ffffff', '#c8102e', '#9be37a'];
   function sceneFinale(t) {
     homeBg(t, true);
+    const beat = t > 3.1 && Math.floor(t * 2.5) % 2 === 0;
+    // goldener Schein hinter Mama & Papa, pulsiert im Takt des großen Herzens
+    const glow = Math.min(t / 2, 1);
+    for (const [rx, ry] of [[19, 16], [14, 12], [9, 9]]) {
+      glowEllipse(72, 95, rx + (beat ? 1 : 0), ry + (beat ? 1 : 0), `rgba(255,214,110,${0.13 * glow})`);
+    }
     familyToday();
     man(98, 88, HEAD.shortCurly, P.sayon);
+    if (t > 3.1) {
+      const lift = beat ? 1 : 0;
+      sprite(HEART, 68, 78 - lift, { r: '#e8264a' });
+      sprite(HEART, 72, 79 - lift, { r: '#ff8fb1' });
+    }
     for (let b = 0; b < 8; b++) {
       const r = rng(100 + b);
       const cx = 16 + r() * 128, cy = 12 + r() * 28, col = FIREWORK[b % FIREWORK.length];
@@ -736,6 +768,13 @@
         const w = str.length * 3 * ns + (str.length - 1) * ns;
         number(str, Math.round(80 - w / 2), hy + s + 1, ns, '#fffaf0');
       }
+    }
+    cockatielOrbit(t, 80, 32, 38, 22, 1.3);
+  }
+  function glowEllipse(cx, cy, rx, ry, c) {
+    for (let dy = -ry; dy <= ry; dy++) {
+      const w = Math.round(rx * Math.sqrt(1 - (dy * dy) / (ry * ry)));
+      rect(cx - w, cy + dy, w * 2 + 1, 1, c);
     }
   }
 
@@ -811,6 +850,7 @@
     rafId = requestAnimationFrame(tick);
   }
   function showStory() {
+    clearTimeout(countRaf);
     clearTimeout(reelTimer);
     reelDone = null;
     $$('.screen').forEach((s) => { s.hidden = s.id !== 'story'; });
@@ -820,10 +860,33 @@
     render(0);
     rafId = requestAnimationFrame(tick);
   }
-  function showCard(withConfetti) {
+  // grand = erst zählt der rote Kasten in 10 Sekunden die gemeinsamen Tage hoch, dann erscheint die Karte
+  const COUNT_MS = 10000;
+  let countRaf = 0;
+  function showCard(grand) {
+    clearTimeout(countRaf);
+    const card = $('#card');
     $$('.screen').forEach((s) => { s.hidden = s.id !== 'card'; });
     window.scrollTo(0, 0);
-    if (withConfetti) confetti(120);
+    card.classList.remove('reveal');
+    if (!grand) { card.classList.remove('counting'); return; }
+    card.classList.add('counting');
+    const num = $('#countNum');
+    const start = Date.now();
+    const step = () => {
+      const p = Math.min((Date.now() - start) / COUNT_MS, 1);
+      const eased = 1 - Math.pow(1 - p, 4);
+      num.textContent = Math.round(days * eased).toLocaleString('de-DE');
+      if (p < 1) { countRaf = setTimeout(step, 30); return; }
+      countRaf = setTimeout(() => {
+        card.classList.remove('counting');
+        card.classList.add('reveal');
+        window.scrollTo(0, 0);
+        confetti(120);
+      }, 900);
+    };
+    num.textContent = '0';
+    step();
   }
   function finishStory() {
     cancelAnimationFrame(rafId);
@@ -837,6 +900,7 @@
   // #frame=12.5 zeigt ein Standbild bei Sekunde 12,5
   const frameMatch = location.hash.match(/^#frame=([\d.]+)$/);
   if (location.hash === '#karte') showCard(false);
+  else if (location.hash === '#tage') showCard(true);
   else if (location.hash === '#fotos') playReel(() => showCard(true));
   else if (location.hash === '#film') showStory();
   else if (frameMatch) {

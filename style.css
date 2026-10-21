@@ -408,6 +408,25 @@ body {
 .btn-gold:active { box-shadow: 0 1px 0 #8f6a1e; }
 .card-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
 
+/* Tageszähler vor der Postkarte */
+.count-intro { display: none; }
+.card-screen.counting > * { display: none; }
+.card-screen.counting > .count-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: calc(100svh - 80px);
+}
+.counter-big { padding: 18px 34px 16px; animation: fade-in .8s ease; }
+.counter-big b { font-size: clamp(3.2rem, 15vw, 5.6rem); font-variant-numeric: tabular-nums; }
+.counter-big span { font-size: .9rem; }
+.count-sub { margin: 0; font-style: italic; color: var(--muted); }
+.card-screen.reveal > * { animation: fade-in 1.1s ease both; }
+.card-screen.reveal > :nth-child(3) { animation-delay: .35s; }
+.card-screen.reveal > :nth-child(4) { animation-delay: .6s; }
+
 /* ---------- 3 · Fotofilm ---------- */
 .reel {
   display: flex;

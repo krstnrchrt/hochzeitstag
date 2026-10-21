@@ -25,7 +25,8 @@ python3 -m http.server 8000
 ```
 
 Dann <http://localhost:8000> öffnen. Abkürzungen: `#film` (direkt zur Animation),
-`#karte` (direkt zur Postkarte), `#frame=20` (Standbild bei Sekunde 20).
+`#fotos` (Fotofilm), `#tage` (Tageszähler + Postkarte), `#karte` (direkt zur Postkarte),
+`#frame=20` (Standbild bei Sekunde 20).
 
 ## Veröffentlichen
 
